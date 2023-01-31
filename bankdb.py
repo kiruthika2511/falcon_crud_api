@@ -42,9 +42,9 @@ class bankdb:
         validated = self.__validate_json(req)
         output = {}
         if validated:
-            insert_sql = 'INSERT INTO bank (customer_id,customer_name,deposit,withdrawel,balance) VALUES (%s, %s, %s, %s, %s)' 
+            insert_sql = 'INSERT INTO bank (customer_name,deposit,balance) VALUES (%s, %s,%s)' 
             req_params = self.__json_content
-            values = (req_params["customer_id"],req_params["customer_name"],req_params["deposit"],req_params["withdrawel"],req_params["balance"])
+            values = (req_params["customer_name"],req_params["deposit"],req_params["deposit"])
             self.cur.execute(insert_sql, values)
             self.con.commit()
             print(f"Record Inserted: {values}")
@@ -73,8 +73,10 @@ class bankdb:
             if balance:
                 if req_params['type'] == 'D':
                     req_params["balance"] = int[balance] + int[req_params["deposit"]]
-            update_sql = 'UPDATE bank SET  deposit = %s,withdrawel=%s,balance= %s WHERE customer_id = %s'
-            values = (req_params["customer_name"], req_params["deposit"], req_params["withdrawel"], req_params["balance"], req_params["customer_id"])
+                else:
+                     req_params["balance"] = int[balance] - int[req_params["deposit"]]
+            update_sql = 'UPDATE bank SET  deposit = %s,withdrawel=%s,balance =%s WHERE customer_id = %s'
+            values = (req_params["deposit"], req_params["withdrawel"], req_params["balance"], req_params["customer_id"])
             self.cur.execute(update_sql,values)
             self.con.commit()
             print(f"Record Updated: {values}")
@@ -126,3 +128,5 @@ class bankdb:
 
 if __name__ == "__main__": 
     pass
+
+
