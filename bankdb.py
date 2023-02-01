@@ -72,13 +72,15 @@ class bankdb:
                 records=records[0]
                 req = req_params['balance']
                 balance = req
-            if balance:
+             if balance:
                 deposit = req_params["deposit"]
                 deposit = deposit
+                withdrawel = req_params["withdrawel"]
+                withdraw = withdrawel
                 if req_params['type'] == 'D':
                     req_params["balance"] = int(balance) + int(deposit)
                 if req_params['type'] == 'C':
-                    req_params["balance"] = int(balance) - int(deposit)
+                    req_params["balance"] = int(balance) - int(withdraw)
             update_sql = 'UPDATE bank_details SET  deposit = %s,withdrawel=%s,balance =%s WHERE customer_id = %s'
             values = (req_params["deposit"], req_params["withdrawel"], req_params["balance"], req_params["customer_id"])
             self.cur.execute(update_sql,values)
