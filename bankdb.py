@@ -32,7 +32,7 @@ class bankdb:
 
     def create_cursor(self):
         self.cur = self.con.cursor()
-        self.cur.execute("Use bankDB")
+        self.cur.execute("Use bank")
         return self.cur
 
     def on_post(self, req, resp):
@@ -42,7 +42,7 @@ class bankdb:
         validated = self.__validate_json(req)
         output = {}
         if validated:
-            insert_sql = 'INSERT INTO bank (customer_name,deposit,balance) VALUES (%s, %s,%s)' 
+            insert_sql = 'INSERT INTO bank_details (customer_name,deposit,balance) VALUES (%s, %s,%s)' 
             req_params = self.__json_content
             values = (req_params["customer_name"],req_params["deposit"],req_params["deposit"])
             self.cur.execute(insert_sql, values)
@@ -58,7 +58,7 @@ class bankdb:
         self.close_connection()
         resp.media = output
 
-   def on_put(self, req, resp):
+    def on_put(self, req, resp):
         self.create_connection()
         self.create_cursor()
         resp.status = falcon.HTTP_200
@@ -72,7 +72,7 @@ class bankdb:
                 records=records[0]
                 req = req_params['balance']
                 balance = req
-             if balance:
+            if balance:
                 deposit = req_params["deposit"]
                 deposit = deposit
                 withdrawel = req_params["withdrawel"]
@@ -99,7 +99,7 @@ class bankdb:
         self.create_cursor()
         resp.status = falcon.HTTP_200
         req_params = json.loads(req.stream.read());
-        delete_sql = "DELETE FROM bank WHERE customer_id = %(a)s"
+        delete_sql = "DELETE FROM bank_details WHERE customer_id = %(a)s"
         self.cur.execute(delete_sql, {"a": req_params["customer_id"]})
         self.con.commit()
         self.close_connection()
@@ -110,9 +110,9 @@ class bankdb:
         resp.status = falcon.HTTP_200
         params = req.params
         if params:
-            self.cur.execute("SELECT * FROM bank WHERE CUSTOMER_NAME = %(a)s", {"a": params["customer_name"]})
+            self.cur.execute("SELECT * FROM bank_details WHERE CUSTOMER_NAME = %(a)s", {"a": params["customer_name"]})
         else:
-            self.cur.execute("SELECT * FROM bank")
+            self.cur.execute("SELECT * FROM bank_details")
         records = self.cur.fetchall()
 
         customers = []
@@ -134,5 +134,8 @@ class bankdb:
 
 if __name__ == "__main__": 
     pass
+
+
+
 
 
