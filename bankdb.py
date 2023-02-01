@@ -58,24 +58,28 @@ class bankdb:
         self.close_connection()
         resp.media = output
 
-    def on_put(self, req, resp):
+   def on_put(self, req, resp):
         self.create_connection()
         self.create_cursor()
         resp.status = falcon.HTTP_200
         req_params = json.loads(req.stream.read())
+        req = req_params['balance']
         if req_params['customer_id']:
-            self.cur.execute(f'select * from bank where customer_id = {req_params["customer_id"]}')
+            self.cur.execute(f'select * from bank_details where customer_id = {req_params["customer_id"]}')
             records = self.cur.fetchall()
             balance = 0
             if records:
                 records=records[0]
-                balance = records['balance']
+                req = req_params['balance']
+                balance = req
             if balance:
+                deposit = req_params["deposit"]
+                deposit = deposit
                 if req_params['type'] == 'D':
-                    req_params["balance"] = int[balance] + int[req_params["deposit"]]
-                else:
-                     req_params["balance"] = int[balance] - int[req_params["deposit"]]
-            update_sql = 'UPDATE bank SET  deposit = %s,withdrawel=%s,balance =%s WHERE customer_id = %s'
+                    req_params["balance"] = int(balance) + int(deposit)
+                if req_params['type'] == 'C':
+                    req_params["balance"] = int(balance) - int(deposit)
+            update_sql = 'UPDATE bank_details SET  deposit = %s,withdrawel=%s,balance =%s WHERE customer_id = %s'
             values = (req_params["deposit"], req_params["withdrawel"], req_params["balance"], req_params["customer_id"])
             self.cur.execute(update_sql,values)
             self.con.commit()
@@ -84,7 +88,7 @@ class bankdb:
                 "msg": "Record Updated {}".format(values)
             }
         else:
-            self.cur.execute('select * from bank')
+            self.cur.execute('select * from bank_details')
         self.close_connection()
         resp.media = output
 
